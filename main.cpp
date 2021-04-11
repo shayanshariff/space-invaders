@@ -1,42 +1,22 @@
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 SDL_Window *window = NULL;
 SDL_Surface *surface = NULL;
 
-//This is code from the internet,just using it to test if sdl is running i will change it soon.
+//This is code from the internet,just using it to test if sdl is running i will change it soon.g++ *.cpp -IC:\mingw_dev_lib\include\SDL2 -LC:\mingw_dev_lib\lib -w -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 int main(int arg, char *argv[])
 {
-    window = SDL_CreateWindow("SDL2 Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
-    if (!window)
-        return -1;
-    surface = SDL_GetWindowSurface(window);
-    if (!surface)
-        return -2;
 
-    SDL_Rect rec;
-    rec.x = 700;
-    rec.y = 10,
-    rec.w = 20;
-    rec.h = 20;
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Window *window = SDL_CreateWindow("Space Invaders", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
-    while (1)
-    {
-        SDL_FillRect(surface, &rec, SDL_MapRGB(surface->format, 180, 10, 140));
+    SDL_SetRenderDrawColor(renderer, 104, 56, 108, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
 
-        rec.x += 6;
-        rec.y += 2;
-        rec.x = rec.x > 800 ? 0 : rec.x;
-        rec.y = rec.y > 600 ? 0 : rec.y;
+    SDL_Delay(3000);
 
-        SDL_FillRect(surface, &rec, SDL_MapRGB(surface->format, 10, 200, 120));
-
-        SDL_UpdateWindowSurface(window);
-        SDL_Delay((1.0 / 60) * 1000);
-    }
-
-    SDL_FreeSurface(surface);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 
     return 0;
 }
