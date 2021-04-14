@@ -2,6 +2,7 @@
 #include<iostream>
 
 SDL_Texture* playerTex;
+SDL_Rect srcR, dstR;
 
 Game::~Game()
 {}
@@ -47,12 +48,13 @@ void Game::handleEvents(){
     }
 }
 void Game::update(){
-
+    dstR.h = 32;
+    dstR.w = 32;
 }
 
 void Game::render(){
     SDL_RenderClear(gRenderer);
-    SDL_RenderCopy(gRenderer, playerTex, NULL, NULL);
+    SDL_RenderCopy(gRenderer, playerTex, NULL, &dstR);
     SDL_RenderPresent(gRenderer);
 }
 void Game::close(){
