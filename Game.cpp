@@ -8,9 +8,10 @@ Game::~Game()
 {}
 Game::Game()
 {}
-
+    int count = 0;
 void Game::init(const char* title, int xPos, int yPos, bool fullscreen){
     int flags = 0;
+
     if(fullscreen){
         flags = SDL_WINDOW_FULLSCREEN;
     }
@@ -48,8 +49,15 @@ void Game::handleEvents(){
     }
 }
 void Game::update(){
-    dstR.h = 32;
-    dstR.w = 32;
+    count++;
+    dstR.h = 64;
+    dstR.w = 64;
+    dstR.y = 536;
+    dstR.x = count;
+    if(count> 1000){
+        count = 0;
+    }
+
 }
 
 void Game::render(){
