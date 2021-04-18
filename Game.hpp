@@ -1,5 +1,5 @@
 #include <SDL.h>
-#include"SDL_Image.h"
+
 
 class Game{
     const int SCREEN_WIDTH = 1000;

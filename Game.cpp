@@ -1,8 +1,15 @@
 #include"Game.hpp"
 #include<iostream>
+#include"TextureManager.hpp"
+#include"BaseObject.hpp"
+#include"ECS.hpp"
+#include"Components.hpp"
 
-SDL_Texture* playerTex;
-SDL_Rect srcR, dstR;
+BaseObject* player;
+BaseObject* player2;
+
+Manager manager;
+auto& newPlayer(manager.addEntity());
 
 Game::~Game()
 {}
@@ -32,9 +39,12 @@ void Game::init(const char* title, int xPos, int yPos, bool fullscreen){
     else{
         isRunning = false;
     }
-    SDL_Surface* tempSurface = IMG_Load("assets/player.png");
-    playerTex = SDL_CreateTextureFromSurface(gRenderer, tempSurface);
-    SDL_FreeSurface(tempSurface);
+    player = new BaseObject("assets/sprites.png", gRenderer, 0, 536);
+    player2 = new BaseObject("assets/sprites.png", gRenderer, 300, 400);
+
+    newPlayer.addComponent<PositionComponent>();
+    newPlayer.getComponent<PositionComponent>().setPos(500, 500);
+
 }
 void Game::handleEvents(){
     SDL_Event event;
@@ -49,20 +59,17 @@ void Game::handleEvents(){
     }
 }
 void Game::update(){
-    count++;
-    dstR.h = 64;
-    dstR.w = 64;
-    dstR.y = 536;
-    dstR.x = count;
-    if(count> 1000){
-        count = 0;
-    }
+    player->update();
+    player2->update();
+    manager.update();
+    std::cout << newPlayer.getComponent<PositionComponent>().x() << "," << newPlayer.getComponent<PositionComponent>().y() << std::endl;;
 
 }
 
 void Game::render(){
     SDL_RenderClear(gRenderer);
-    SDL_RenderCopy(gRenderer, playerTex, NULL, &dstR);
+    player->render();
+    player2->render();
     SDL_RenderPresent(gRenderer);
 }
 void Game::close(){
