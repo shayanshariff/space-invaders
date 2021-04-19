@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SDL.h>
 
 
@@ -8,7 +10,6 @@ class Game{
     bool isRunning;
 
     SDL_Window* gWindow = NULL;
-    SDL_Renderer* gRenderer = NULL;
 
     public:
         Game();
@@ -20,5 +21,6 @@ class Game{
         void close();
         bool running();
 
+        static SDL_Renderer* gRenderer;
 
 };

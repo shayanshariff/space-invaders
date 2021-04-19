@@ -1,16 +1,12 @@
 #include"Game.hpp"
 #include<iostream>
 #include"TextureManager.hpp"
-#include"BaseObject.hpp"
-#include"ECS.hpp"
 #include"Components.hpp"
 
-BaseObject* player;
-BaseObject* player2;
-
 Manager manager;
-auto& newPlayer(manager.addEntity());
+auto& player(manager.addEntity());
 
+SDL_Renderer* Game::gRenderer = nullptr;
 Game::~Game()
 {}
 Game::Game()
@@ -39,11 +35,12 @@ void Game::init(const char* title, int xPos, int yPos, bool fullscreen){
     else{
         isRunning = false;
     }
-    player = new BaseObject("assets/sprites.png", gRenderer, 0, 536);
-    player2 = new BaseObject("assets/sprites.png", gRenderer, 300, 400);
 
-    newPlayer.addComponent<PositionComponent>();
-    newPlayer.getComponent<PositionComponent>().setPos(500, 500);
+
+    player.addComponent<PositionComponent>();
+    player.addComponent<SpriteComponent>("assets/player.png");
+
+
 
 }
 void Game::handleEvents(){
@@ -59,17 +56,21 @@ void Game::handleEvents(){
     }
 }
 void Game::update(){
-    player->update();
-    player2->update();
+    manager.refresh();
     manager.update();
-    std::cout << newPlayer.getComponent<PositionComponent>().x() << "," << newPlayer.getComponent<PositionComponent>().y() << std::endl;;
+
+    if(player.getComponent<PositionComponent>().x() > 1000){
+        player.getComponent<PositionComponent>().x(0);
+    }
+    if(player.getComponent<PositionComponent>().y() > 600){
+        player.getComponent<PositionComponent>().y(0);
+    }
 
 }
 
 void Game::render(){
     SDL_RenderClear(gRenderer);
-    player->render();
-    player2->render();
+    manager.draw();
     SDL_RenderPresent(gRenderer);
 }
 void Game::close(){
