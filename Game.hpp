@@ -22,5 +22,6 @@ class Game{
         bool running();
 
         static SDL_Renderer* gRenderer;
+        static SDL_Event event;
 
 };

@@ -8,6 +8,8 @@ Manager manager;
 auto& player(manager.addEntity());
 
 SDL_Renderer* Game::gRenderer = nullptr;
+SDL_Event Game::event;
+
 Game::~Game()
 {}
 Game::Game()
@@ -40,12 +42,14 @@ void Game::init(const char* title, int xPos, int yPos, bool fullscreen){
 
     player.addComponent<TransformComponent>();
     player.addComponent<SpriteComponent>("assets/player.png");
+    player.addComponent<KeyboardController>();
 
 
 
 }
 void Game::handleEvents(){
-    SDL_Event event;
+    
+
     SDL_PollEvent(&event);
 
     switch(event.type){
@@ -59,7 +63,7 @@ void Game::handleEvents(){
 void Game::update(){
     manager.refresh();
     manager.update();
-    player.getComponent<TransformComponent>().position.Add(Vector2D(5,0));
+
     if(player.getComponent<TransformComponent>().position.x > 1000){
         player.getComponent<TransformComponent>().position.x = 0 ;
     }
