@@ -4,7 +4,7 @@
 #include<SDL.h>
 
 class SpriteComponent: public Component{
-    PositionComponent *position;
+    TransformComponent *transform;
     SDL_Texture *texture;
     SDL_Rect srcRect, dstRect;
 
@@ -20,7 +20,7 @@ class SpriteComponent: public Component{
     }
     void init() override{
 
-        position = &entity->getComponent<PositionComponent>();
+        transform = &entity->getComponent<TransformComponent>();
 
         srcRect.x = srcRect.y = 0;
         srcRect.w = srcRect.h = 48;
@@ -28,8 +28,8 @@ class SpriteComponent: public Component{
 
     }
     void update() override{
-        dstRect.x = position->x();
-        dstRect.y = position->y();
+        dstRect.x = (int)transform->position.x;
+        dstRect.y = (int)transform->position.y;
     }
     void draw() override{
         TextureManager::Draw(texture, srcRect, dstRect);

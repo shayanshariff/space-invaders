@@ -2,6 +2,7 @@
 #include<iostream>
 #include"TextureManager.hpp"
 #include"Components.hpp"
+#include"Vector2D.hpp"
 
 Manager manager;
 auto& player(manager.addEntity());
@@ -37,7 +38,7 @@ void Game::init(const char* title, int xPos, int yPos, bool fullscreen){
     }
 
 
-    player.addComponent<PositionComponent>();
+    player.addComponent<TransformComponent>();
     player.addComponent<SpriteComponent>("assets/player.png");
 
 
@@ -58,12 +59,12 @@ void Game::handleEvents(){
 void Game::update(){
     manager.refresh();
     manager.update();
-
-    if(player.getComponent<PositionComponent>().x() > 1000){
-        player.getComponent<PositionComponent>().x(0);
+    player.getComponent<TransformComponent>().position.Add(Vector2D(5,0));
+    if(player.getComponent<TransformComponent>().position.x > 1000){
+        player.getComponent<TransformComponent>().position.x = 0 ;
     }
-    if(player.getComponent<PositionComponent>().y() > 600){
-        player.getComponent<PositionComponent>().y(0);
+    if(player.getComponent<TransformComponent>().position.y > 600){
+        player.getComponent<TransformComponent>().position.y = 0;
     }
 
 }
