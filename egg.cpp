@@ -6,9 +6,7 @@ void Egg::draw(SDL_Renderer* gRenderer, SDL_Texture* assets){
 
 }
 void Egg::drop(){
-    if(moverRect.y < 550){
         moverRect.y -= 2;
-    }
     if(moverRect.y <= 0){
         srcRect = {207, 244, 231, 186};
         destroyTrue();                   //sets destroy = true when egg reaches the bottom
