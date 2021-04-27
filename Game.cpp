@@ -1,90 +1,210 @@
-#include"Game.hpp"
+#include "game.hpp"
+#include"Player.hpp"
+#include "SpaceInvaders.hpp"
+#include <stdio.h>
+#include <stdlib.h>
+#include<time.h>
 #include<iostream>
-#include"TextureManager.hpp"
-#include"Components.hpp"
-#include"Vector2D.hpp"
 
-Manager manager;
-auto& player(manager.addEntity());
+bool Game::init()
+{
+	//Initialization flag
+	bool success = true;
 
-SDL_Renderer* Game::gRenderer = nullptr;
-SDL_Event Game::event;
+	//Initialize SDL
+	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+	{
+		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+		success = false;
+	}
+	else
+	{
+		//Set texture filtering to linear
+		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+		{
+			printf( "Warning: Linear texture filtering not enabled!" );
+		}
 
-Game::~Game()
-{}
-Game::Game()
-{}
-    int count = 0;
-void Game::init(const char* title, int xPos, int yPos, bool fullscreen){
-    int flags = 0;
+		//Create window
+		gWindow = SDL_CreateWindow( "HU Mania", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		if( gWindow == NULL )
+		{
+			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+			success = false;
+		}
+		else
+		{
+			//Create renderer for window
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+			if( gRenderer == NULL )
+			{
+				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+				success = false;
+			}
+			else
+			{
+				//Initialize renderer color
+				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-    if(fullscreen){
-        flags = SDL_WINDOW_FULLSCREEN;
-    }
-    if(SDL_Init(SDL_INIT_EVERYTHING) == 0){
-        std::cout << "init done" << std::endl;
+				//Initialize PNG loading
+				int imgFlags = IMG_INIT_PNG;
+				if( !( IMG_Init( imgFlags ) & imgFlags ) )
+				{
+					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+					success = false;
+				}
+				if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+				{
+					printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+					success = false;
+				}
+			}
+		}
 
-        gWindow = SDL_CreateWindow(title, xPos, yPos, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
-        if(gWindow){
-            std::cout << "window made" << std::endl;
-        }
-        gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED );
-        if(gRenderer){
-            SDL_SetRenderDrawColor(gRenderer, 104, 56, 108, 255);
-            std::cout << "Renderer was made" << std::endl;
-        }
-        isRunning = true;
-    }
-    else{
-        isRunning = false;
-    }
+	}
 
-
-    player.addComponent<TransformComponent>();
-    player.addComponent<SpriteComponent>("assets/player.png");
-    player.addComponent<KeyboardController>();
-
-
-
-}
-void Game::handleEvents(){
-    
-
-    SDL_PollEvent(&event);
-
-    switch(event.type){
-        case SDL_QUIT:
-            isRunning = false;
-            break;
-        default:
-            break;
-    }
-}
-void Game::update(){
-    manager.refresh();
-    manager.update();
-
-    if(player.getComponent<TransformComponent>().position.x > 1000){
-        player.getComponent<TransformComponent>().position.x = 0 ;
-    }
-    if(player.getComponent<TransformComponent>().position.y > 600){
-        player.getComponent<TransformComponent>().position.y = 0;
-    }
-
+	return success;
 }
 
-void Game::render(){
-    SDL_RenderClear(gRenderer);
-    manager.draw();
-    SDL_RenderPresent(gRenderer);
-}
-void Game::close(){
-    SDL_DestroyWindow(gWindow);
-    SDL_DestroyRenderer(gRenderer);
-    SDL_Quit();
-    std::cout << "Game cleaned" << std::endl;
+bool Game::loadMedia()
+{
+	//Loading success flag
+	bool success = true;
+	
+	assets = loadTexture("assets/sprites.png");
+    gTexture = loadTexture("assets/background.png");
+	if(assets==NULL || gTexture==NULL)
+    {
+        printf("Unable to run due to error: %s\n",SDL_GetError());
+        success =false;
+    }
+	bgMusic = Mix_LoadMUS( "sounds/bg.mp3" );
+
+	if(bgMusic == NULL){
+		printf("Unable to load music: %s \n", Mix_GetError());
+		success = false;
+	}
+	return success;
 }
 
-bool Game::running(){
-        return isRunning;
-    }
+void Game::close()
+{
+	//Free loaded images
+	SDL_DestroyTexture(assets);
+	assets=NULL;
+	SDL_DestroyTexture(gTexture);
+	
+	//Destroy window
+	SDL_DestroyRenderer( gRenderer );
+	SDL_DestroyWindow( gWindow );
+	gWindow = NULL;
+	gRenderer = NULL;
+	Mix_FreeMusic(bgMusic);
+	bgMusic = NULL;
+	//Quit SDL subsystems
+	IMG_Quit();
+	Mix_Quit();
+	SDL_Quit();
+}
+
+SDL_Texture* Game::loadTexture( std::string path )
+{
+	//The final texture
+	SDL_Texture* newTexture = NULL;
+
+	//Load image at specified path
+	SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
+	if( loadedSurface == NULL )
+	{
+		printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
+	}
+	else
+	{
+		//Create texture from surface pixels
+        newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
+		if( newTexture == NULL )
+		{
+			printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
+		}
+
+		//Get rid of old loaded surface
+		SDL_FreeSurface( loadedSurface );
+	}
+
+	return newTexture;
+}
+void Game::run( )
+{
+	bool quit = false;
+	SDL_Event e;
+	SpaceInvaders spaceinvaders(gRenderer, assets);
+	Player* player;
+	srand(time(0));  //Seeding random variable on initialization of game state
+	spaceinvaders.createPlayer(300, 400);
+	
+	player = spaceinvaders.getPlayer();
+
+	while( !quit )
+	{
+		//Handle events on queue
+		
+		
+		while( SDL_PollEvent( &e ) != 0 )
+		{
+			//User requests quit
+			if( e.type == SDL_QUIT )
+			{
+				quit = true;
+			}
+
+			if(e.type == SDL_MOUSEBUTTONDOWN){
+				int playerX, playerY;
+				playerX = player->mover()->x + 24;
+				playerY = player->mover()->y + 5;
+				spaceinvaders.createObject(playerX, playerY);
+
+				
+			}
+			 if(e.type == SDL_KEYDOWN){
+            switch(e.key.keysym.sym){
+                case SDLK_w:
+
+                    player->move('w');
+                    break;
+                case SDLK_a:
+                    player->move('a');
+                    break;
+                case SDLK_s:
+                    player->move('s');
+                    break;
+                case SDLK_d:
+                    player->move('d');
+                    break;
+                
+            	}
+        	}
+			
+
+    	}
+		if( Mix_PlayingMusic() == 0 )
+		{
+			//Play the music
+			Mix_PlayMusic( bgMusic, 2 );
+		}
+		SDL_RenderClear(gRenderer); //removes everything from renderer
+		SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);//Draws background to renderer
+		//***********************draw the objects here********************
+
+		spaceinvaders.drawObjects();
+
+		//****************************************************************
+    	SDL_RenderPresent(gRenderer); //displays the updated renderer
+
+	    SDL_Delay(2);	//causes sdl engine to delay for specified miliseconds
+
+	}
+
+		
+}
+			
+
