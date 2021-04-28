@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include<time.h>
 
-//These three draw functions are all basically the same, the isDestroy() in Player and egg check if they need to be destroyed fir eg reaching the bottom for egg or colliding with a nest
+//These three draw functions are all basically the same, the isDestroy() in Player and Bullet check if they need to be destroyed fir eg reaching the bottom for Bullet or colliding with a nest
 void SpaceInvaders::drawPlayer(){
         for (auto iPig = pigList.begin(); iPig != pigList.end(); ++iPig){
             (*iPig)->draw(gRenderer, assets);
@@ -19,15 +19,15 @@ void SpaceInvaders::drawPlayer(){
         }
     }
 
-void SpaceInvaders::drawEgg(){
-    for (auto iEgg = eggList.begin(); iEgg != eggList.end(); ++iEgg){
-            (*iEgg)->draw(gRenderer, assets);
-            (*iEgg)->drop();
-            babyPlayer((*iEgg), (*iEgg)->mover());    
-            if((*iEgg)->isDestroy()){
-                    delete *iEgg;
-                    *iEgg = NULL;
-                    eggList.erase(iEgg);
+void SpaceInvaders::drawBullet(){
+    for (auto iBullet = BulletList.begin(); iBullet != BulletList.end(); ++iBullet){
+            (*iBullet)->draw(gRenderer, assets);
+            (*iBullet)->shoot();
+            babyPlayer((*iBullet), (*iBullet)->mover());    
+            if((*iBullet)->isDestroy()){
+                    delete *iBullet;
+                    *iBullet = NULL;
+                    BulletList.erase(iBullet);
                 }
     }
 }
@@ -39,10 +39,10 @@ void SpaceInvaders::drawNest(){
         }
 }
 
-void SpaceInvaders::babyPlayer(Egg* e1, const SDL_Rect * eggMover){       
-    //Checks for intersection with a nest for the egg passed into it.
+void SpaceInvaders::babyPlayer(Bullet* e1, const SDL_Rect * BulletMover){       
+    //Checks for intersection with a nest for the Bullet passed into it.
     for (auto iNestIntersect = nestList.begin(); iNestIntersect != nestList.end(); ++iNestIntersect){
-            if(SDL_HasIntersection(eggMover, (*iNestIntersect)->mover())){
+            if(SDL_HasIntersection(BulletMover, (*iNestIntersect)->mover())){
                 Player *baby = new Player((*iNestIntersect)->mover()->x, (*iNestIntersect)->mover()->y, 5, 6);
                 pigList.push_back(baby);
                     drawPlayer();     
@@ -54,15 +54,15 @@ void SpaceInvaders::babyPlayer(Egg* e1, const SDL_Rect * eggMover){
 
 void SpaceInvaders::drawObjects(){
     //Checks if each list is empty, before drawing whatever is in that list. We have to perform the check because if we call draw on an empty list, it crashes the game(and my computer)
-    if(!eggList.empty()){
-        drawEgg();
+    if(!BulletList.empty()){
+        drawBullet();
     }
     drawPlayer();
 }
 
 void SpaceInvaders::createObject(int x, int y){
 
-    eggList.push_back(new Egg(x, y));
+    BulletList.push_back(new Bullet(x, y));
 
             
 

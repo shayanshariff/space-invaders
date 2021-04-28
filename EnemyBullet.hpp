@@ -1,14 +1,15 @@
 #include<SDL.h>
 #include "unit.hpp"
+#include"Bullet.hpp"
 
-class Egg: Unit{
+class EnemyBullet: Unit{
 
 public:
     void draw(SDL_Renderer*, SDL_Texture* assets);
-    void drop();
+    void shoot();
     bool isDestroy();
     void destroyTrue();
     SDL_Rect *mover();
-    Egg();
-    Egg(int x, int y);
+    EnemyBullet();
+    EnemyBullet(int x, int y);
 };
