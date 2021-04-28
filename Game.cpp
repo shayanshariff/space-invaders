@@ -26,7 +26,7 @@ bool Game::init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( "HU Mania", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "Space Invaders", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -136,6 +136,7 @@ SDL_Texture* Game::loadTexture( std::string path )
 void Game::run( )
 {
 	bool quit = false;
+	bool start = false;
 	SDL_Event e;
 	SpaceInvaders spaceinvaders(gRenderer, assets);
 	Player* player;
@@ -148,7 +149,22 @@ void Game::run( )
 	{
 		//Handle events on queue
 		
-		
+		if(start == false){
+			gTexture = loadTexture("assets/titlescreen.png");
+			 //removes everything from renderer
+			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+			SDL_RenderPresent(gRenderer);
+		}
+		else if(start == true){
+			SDL_RenderClear(gRenderer);
+			gTexture = loadTexture("assets/background.png");
+
+			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+			spaceinvaders.drawObjects();
+			SDL_RenderPresent(gRenderer);
+			
+
+		}
 		while( SDL_PollEvent( &e ) != 0 )
 		{
 			//User requests quit
@@ -156,7 +172,9 @@ void Game::run( )
 			{
 				quit = true;
 			}
-
+			if(e.key.keysym.sym == SDLK_KP_ENTER || e.key.keysym.sym == SDLK_RETURN){
+				start = true;
+			}
 			if(e.type == SDL_MOUSEBUTTONDOWN){
 				int playerX, playerY;
 				playerX = player->mover()->x + 24;
@@ -191,20 +209,13 @@ void Game::run( )
 			//Play the music
 			Mix_PlayMusic( bgMusic, 2 );
 		}
-		SDL_RenderClear(gRenderer); //removes everything from renderer
-		SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);//Draws background to renderer
-		//***********************draw the objects here********************
 
-		spaceinvaders.drawObjects();
-
-		//****************************************************************
-    	SDL_RenderPresent(gRenderer); //displays the updated renderer
 
 	    SDL_Delay(2);	//causes sdl engine to delay for specified miliseconds
 
 	}
-
+	}
 		
-}
+
 			
 
