@@ -141,7 +141,7 @@ void Game::run( )
 	SpaceInvaders spaceinvaders(gRenderer, assets);
 	Player* player;
 	srand(time(0));  //Seeding random variable on initialization of game state
-	spaceinvaders.createPlayer(300, 400);
+	spaceinvaders.createPlayer(500, 400);
 	
 	player = spaceinvaders.getPlayer();
 
@@ -168,6 +168,10 @@ void Game::run( )
 		while( SDL_PollEvent( &e ) != 0 )
 		{
 			//User requests quit
+			if((1 + rand() % 1000) < 10){
+				spaceinvaders.createEnemy(1 + rand() % 1000,-48);
+			}
+			
 			if( e.type == SDL_QUIT )
 			{
 				quit = true;
@@ -179,14 +183,13 @@ void Game::run( )
 				int playerX, playerY;
 				playerX = player->mover()->x + 24;
 				playerY = player->mover()->y + 5;
-				spaceinvaders.createObject(playerX, playerY);
+				spaceinvaders.createBullet(playerX, playerY);
 
 				
 			}
 			 if(e.type == SDL_KEYDOWN){
             switch(e.key.keysym.sym){
                 case SDLK_w:
-
                     player->move('w');
                     break;
                 case SDLK_a:

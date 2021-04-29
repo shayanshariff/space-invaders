@@ -1,7 +1,7 @@
 #include<SDL.h>
 #include "Player.hpp"
 #include "Bullet.hpp"
-#include "nest.hpp"
+#include "Enemy.hpp"
 #include<vector>
 #include<list>
 
@@ -15,17 +15,18 @@ class SpaceInvaders{
     public:
     Player p1;
     Bullet e1;
-    Nest n1;
-    std::list<Player*> pigList;
+    Enemy n1;
+    std::list<Player*> playerList;
     std::list<Bullet*> BulletList;
-    std::list<Nest*> nestList;
+    std::list<Enemy*> EnemyList;
     SpaceInvaders(SDL_Renderer *, SDL_Texture *);
-    void babyPlayer(Bullet* e1, const SDL_Rect *  BulletMover);
+    void enemyHit(Bullet* e1, const SDL_Rect *  BulletMover);
     void createPlayer(int x, int y);
+    void createEnemy(int x, int y);
     Player* getPlayer();
     void drawPlayer();
     void drawBullet();
-    void drawNest();
+    void drawEnemy();
     void drawObjects(); 
-    void createObject(int, int);
+    void createBullet(int, int);
 };

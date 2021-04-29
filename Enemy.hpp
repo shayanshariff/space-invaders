@@ -1,14 +1,16 @@
 #include<SDL.h>
 #include "unit.hpp"
 
-class Nest: Unit{
+class Enemy: Unit{
 
 
 public:
 
     void draw(SDL_Renderer*, SDL_Texture* assets);
-    void wiggle();
+    void descend();
+    bool isDestroy();
+    void destroyTrue();
     SDL_Rect *mover();
-    Nest(); 
-    Nest(int x, int y);
+    Enemy(); 
+    Enemy(int x, int y);
 };

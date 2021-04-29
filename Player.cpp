@@ -3,7 +3,7 @@
 #pragma once
 // Player implementation will go here.
 
-float speed = 10;
+float speed = 15;
 
 
 void Player::draw(SDL_Renderer* gRenderer, SDL_Texture* assets){
@@ -13,16 +13,24 @@ void Player::draw(SDL_Renderer* gRenderer, SDL_Texture* assets){
 
 void Player::move(char direction){
     if (direction == 'w'){
-        moverRect.y -= speed;
+        if(moverRect.y > 0){
+            moverRect.y -= speed;
+        }
     }
     if (direction == 's'){
-        moverRect.y += speed;
+        if(moverRect.y < 552){
+            moverRect.y += speed;
+        }
     }
     if (direction == 'a'){
-        moverRect.x -= speed;
+        if(moverRect.x > 0){
+            moverRect.x -= speed;
+        }
     }
     if (direction == 'd'){
-        moverRect.x += speed;
+        if(moverRect.x < 952){
+            moverRect.x += speed;
+        }
     }
 }
 void Player::fly()
@@ -51,12 +59,6 @@ void Player::fly()
    }
    //move 
 
-   if(moverRect.x >= 1000 ){
-       destroy = true;
-   }
-   if(moverRect.y <= 0){
-       destroy = true;
-   }
 
 }
 
