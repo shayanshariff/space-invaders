@@ -6,6 +6,7 @@
 #include <string>
 #include <stdlib.h>
 #include <time.h>
+#include"SDL_ttf.h"
 
 class Game{
     //Screen dimension constants
@@ -24,6 +25,7 @@ class Game{
     SDL_Texture* assets=NULL;
     
     Mix_Music *bgMusic = NULL;
+    Mix_Music *playerShot = NULL;
 
 public:
 

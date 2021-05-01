@@ -6,7 +6,7 @@ void Bullet::draw(SDL_Renderer* gRenderer, SDL_Texture* assets){
 
 }
 void Bullet::shoot(){
-        moverRect.y -= 2;
+        moverRect.y -= 5;
     if(moverRect.y <= 0){
         srcRect = {207, 244, 231, 186};
         destroyTrue();                   //sets destroy = true when Bullet reaches the bottom

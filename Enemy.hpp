@@ -10,6 +10,9 @@ public:
     void descend();
     bool isDestroy();
     void destroyTrue();
+    bool crossed;
+    bool hasCrossed();
+    void cross();
     SDL_Rect *mover();
     Enemy(); 
     Enemy(int x, int y);

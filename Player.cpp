@@ -33,44 +33,10 @@ void Player::move(char direction){
         }
     }
 }
-void Player::fly()
-{
-    //animating them for the flap
-   if (srcRect.x==6){
-       
-        srcRect.x = 0;
-        srcRect.y = 154;
-        srcRect.w = 153;
-        srcRect.h = 83;
-   }
-   //animating them for the bottom flap
-   else if (srcRect.x == 2){
-       srcRect.x = 6;
-       srcRect.y = 6;
-       srcRect.w = 155;
-       srcRect.h = 102;
-   }
-   //animating them for the middle.
-   else if (srcRect.x == 0){
-       srcRect.x = 2;
-       srcRect.y = 270;
-       srcRect.w = 150;
-       srcRect.h = 123;
-   }
-   //move 
 
-
-}
 
 bool Player::isDestroy(){
     return destroy;
-}
-void Player::unBaby(){       //This is the function to grow the Player to normal size if it is a baby. If the height and width are already equal to the full size, nothing happens
-                            //so we can call it on every Player without any problems.
-    if(moverRect.w != 50 && moverRect.h != 60){
-        moverRect.w += 2.5;
-        moverRect.h += 3;
-    }
 }
 
 SDL_Rect *Player::mover(){  //getter function for the moverRect

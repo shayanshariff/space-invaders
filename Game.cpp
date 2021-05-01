@@ -1,16 +1,21 @@
 #include "game.hpp"
 #include"Player.hpp"
+#include"Lives.hpp"
 #include "SpaceInvaders.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include<time.h>
 #include<iostream>
 
+
+
+
 bool Game::init()
 {
 	//Initialization flag
 	bool success = true;
 
+	TTF_Init();
 	//Initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -62,7 +67,7 @@ bool Game::init()
 		}
 
 	}
-
+	
 	return success;
 }
 
@@ -79,11 +84,14 @@ bool Game::loadMedia()
         success =false;
     }
 	bgMusic = Mix_LoadMUS( "sounds/bg.mp3" );
+	playerShot = Mix_LoadMUS("sounds/player.mp3");
 
 	if(bgMusic == NULL){
 		printf("Unable to load music: %s \n", Mix_GetError());
 		success = false;
 	}
+
+
 	return success;
 }
 
@@ -100,7 +108,10 @@ void Game::close()
 	gWindow = NULL;
 	gRenderer = NULL;
 	Mix_FreeMusic(bgMusic);
+	Mix_FreeMusic(playerShot);
 	bgMusic = NULL;
+	playerShot = NULL;
+
 	//Quit SDL subsystems
 	IMG_Quit();
 	Mix_Quit();
@@ -136,57 +147,80 @@ SDL_Texture* Game::loadTexture( std::string path )
 void Game::run( )
 {
 	bool quit = false;
-	bool start = false;
+	bool start,instructions = false;
 	SDL_Event e;
+	SDL_Color color={255, 255, 255};
 	SpaceInvaders spaceinvaders(gRenderer, assets);
 	Player* player;
 	srand(time(0));  //Seeding random variable on initialization of game state
 	spaceinvaders.createPlayer(500, 400);
-	
+	spaceinvaders.createLife(5, 570);
+	spaceinvaders.createLife(26, 570);
+	spaceinvaders.createLife(47, 570);
 	player = spaceinvaders.getPlayer();
 
 	while( !quit )
 	{
 		//Handle events on queue
 		
-		if(start == false){
+		if(start == false && instructions == false){
 			gTexture = loadTexture("assets/titlescreen.png");
 			 //removes everything from renderer
 			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+			gTexture = NULL;
+			SDL_RenderPresent(gRenderer);
+		}
+		else if(start == false){
+			gTexture = loadTexture("assets/instructions.png");
+			 //removes everything from renderer
+			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+			gTexture = NULL;
 			SDL_RenderPresent(gRenderer);
 		}
 		else if(start == true){
-			SDL_RenderClear(gRenderer);
-			gTexture = loadTexture("assets/background.png");
-
+				if(gTexture == NULL){
+					SDL_RenderClear(gRenderer);
+					gTexture = loadTexture("assets/background.png");
+			}
 			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 			spaceinvaders.drawObjects();
 			SDL_RenderPresent(gRenderer);
+			if((1 + rand() % 1000) < 10){
+				if(spaceinvaders.EnemyList.size() < 30){
+					spaceinvaders.createEnemy(1 + rand() % 1000,-48);
+				}
+			}
+
+			}
 			
 
-		}
+
 		while( SDL_PollEvent( &e ) != 0 )
 		{
 			//User requests quit
-			if((1 + rand() % 1000) < 10){
-				spaceinvaders.createEnemy(1 + rand() % 1000,-48);
-			}
+			
 			
 			if( e.type == SDL_QUIT )
 			{
 				quit = true;
 			}
 			if(e.key.keysym.sym == SDLK_KP_ENTER || e.key.keysym.sym == SDLK_RETURN){
+				instructions = true;
+			}
+			if(e.key.keysym.sym == SDLK_TAB){
 				start = true;
+				
 			}
 			if(e.type == SDL_MOUSEBUTTONDOWN){
 				int playerX, playerY;
 				playerX = player->mover()->x + 24;
 				playerY = player->mover()->y + 5;
 				spaceinvaders.createBullet(playerX, playerY);
+				Mix_PlayMusic( playerShot, 0.1 );
 
 				
-			}
+			} 
+
 			 if(e.type == SDL_KEYDOWN){
             switch(e.key.keysym.sym){
                 case SDLK_w:
@@ -214,7 +248,7 @@ void Game::run( )
 		}
 
 
-	    SDL_Delay(2);	//causes sdl engine to delay for specified miliseconds
+	    SDL_Delay(20);	//causes sdl engine to delay for specified miliseconds
 
 	}
 	}

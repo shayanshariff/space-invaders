@@ -3,18 +3,15 @@
 #include<SDL.h>
 #include "unit.hpp"
 
-class Player: Unit{
+class Lives: Unit{
 
 
 public:
     // add the fly function here as well.
     void draw(SDL_Renderer*, SDL_Texture* assets);
-    void fly();
     bool isDestroy();
-    void move(char direction);
-    Player(); 
-    Player(int x, int y);
-    Player(int x, int y, int w, int h);
-    SDL_Rect* mover();
+    void destroyTrue();
+    Lives(); 
+    Lives(int x, int y);
     // may add other overloaded constructors here... 
 };

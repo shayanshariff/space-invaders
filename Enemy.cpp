@@ -10,8 +10,17 @@ void Enemy::descend(){
     moverRect.y += 1;
     if(moverRect.y > 600){
         destroyTrue();
+        cross();
     }
         
+}
+
+bool Enemy::hasCrossed(){
+    return crossed;
+}
+
+void Enemy::cross(){
+    crossed = true;
 }
 bool Enemy::isDestroy(){
     return destroy;

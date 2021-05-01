@@ -5,16 +5,28 @@
 #include <stdlib.h>
 #include<time.h>
 
+int SpaceInvaders::getScore(){
+    return score;
+}
 //These three draw functions are all basically the same, the isDestroy() in Player and Bullet check if they need to be destroyed fir eg reaching the bottom for Bullet or colliding with a Enemy
 void SpaceInvaders::drawPlayer(){
         for (auto iplayer = playerList.begin(); iplayer != playerList.end(); ++iplayer){
             (*iplayer)->draw(gRenderer, assets);
-            (*iplayer)->fly(); 
-            (*iplayer)->unBaby();    //if the Player is a baby, it will grow with this function, otherwise there will be no change
             if((*iplayer)->isDestroy()){
                 delete *iplayer;
                 *iplayer = NULL;
                 playerList.erase(iplayer);
+            }
+        }
+    }
+
+void SpaceInvaders::drawLife(){
+        for (auto iLife = LivesList.begin(); iLife != LivesList.end(); ++iLife){
+            (*iLife)->draw(gRenderer, assets);
+            if((*iLife)->isDestroy()){
+                delete *iLife;
+                *iLife = NULL;
+                LivesList.erase(iLife);
             }
         }
     }
@@ -37,9 +49,18 @@ void SpaceInvaders::drawEnemy(){
             (*iEnemy)->draw(gRenderer, assets);
             (*iEnemy)->descend();
             if((*iEnemy)->isDestroy()){
+                if((*iEnemy)->hasCrossed()){
+                        if(!LivesList.empty()){
+                            LivesList.back()->destroyTrue();
+                        }
+                        else{
+                            std::cout << "Game Over" << std::endl;
+                        }
+                    }
                     delete *iEnemy;
                     *iEnemy = NULL;
                     EnemyList.erase(iEnemy);
+                    
                     std::cout << "destroyed" << std::endl;
                 }
         }
@@ -51,7 +72,11 @@ void SpaceInvaders::enemyHit(Bullet* e1, const SDL_Rect * BulletMover){
             if(SDL_HasIntersection(BulletMover, (*iEnemyIntersect)->mover())){   
                     e1->destroyTrue();  //To set destroy to true after the collision
                     (*iEnemyIntersect)->destroyTrue();
-                    std::cout << "collide" << std::endl;
+                    score += 10;
+                    
+                    
+                    std::cout << std::to_string(SpaceInvaders::getScore()) << std::endl;
+
 
             }
         }
@@ -64,6 +89,9 @@ void SpaceInvaders::drawObjects(){
     }
     if(!EnemyList.empty()){
         drawEnemy();
+    }
+    if(!LivesList.empty()){
+        drawLife();
     }
     drawPlayer();
 }
@@ -78,6 +106,10 @@ void SpaceInvaders::createPlayer(int x, int y){
 
 void SpaceInvaders::createEnemy(int x, int y){
     EnemyList.push_back(new Enemy(x, y));
+}
+
+void SpaceInvaders::createLife(int x, int y){
+    LivesList.push_back(new Lives(x, y));
 }
 
 Player* SpaceInvaders::getPlayer(){
