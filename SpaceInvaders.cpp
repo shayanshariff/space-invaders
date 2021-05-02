@@ -8,6 +8,14 @@
 int SpaceInvaders::getScore(){
     return score;
 }
+
+bool SpaceInvaders::isGameOver(){
+    return gameOverState;
+}
+
+void SpaceInvaders::gameOver(){
+    gameOverState = true;
+}
 //These three draw functions are all basically the same, the isDestroy() in Player and Bullet check if they need to be destroyed fir eg reaching the bottom for Bullet or colliding with a Enemy
 void SpaceInvaders::drawPlayer(){
         for (auto iplayer = playerList.begin(); iplayer != playerList.end(); ++iplayer){
@@ -54,7 +62,7 @@ void SpaceInvaders::drawEnemy(){
                             LivesList.back()->destroyTrue();
                         }
                         else{
-                            std::cout << "Game Over" << std::endl;
+                            SpaceInvaders::gameOver();
                         }
                     }
                     delete *iEnemy;

@@ -12,6 +12,7 @@ class SpaceInvaders{
     SDL_Renderer *gRenderer;
     SDL_Texture *assets;
     int score = 0;
+    bool gameOverState = false;
     
     public:
     Player p1;
@@ -27,6 +28,8 @@ class SpaceInvaders{
     void createPlayer(int x, int y);
     void createEnemy(int x, int y);
     void createLife(int x, int y);
+    bool isGameOver();
+    void gameOver();
     Player* getPlayer();
     void drawPlayer();
     void drawBullet();

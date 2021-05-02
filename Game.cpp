@@ -162,85 +162,93 @@ void Game::run( )
 	while( !quit )
 	{
 		//Handle events on queue
-		
-		if(start == false && instructions == false){
-			gTexture = loadTexture("assets/titlescreen.png");
+		if(spaceinvaders.isGameOver()){
+			gTexture = loadTexture("assets/gameover.png");
 			 //removes everything from renderer
 			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 			gTexture = NULL;
 			SDL_RenderPresent(gRenderer);
 		}
-		else if(start == false){
-			gTexture = loadTexture("assets/instructions.png");
-			 //removes everything from renderer
-			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
-			gTexture = NULL;
-			SDL_RenderPresent(gRenderer);
-		}
-		else if(start == true){
-				if(gTexture == NULL){
-					SDL_RenderClear(gRenderer);
-					gTexture = loadTexture("assets/background.png");
+		else{
+			if(start == false && instructions == false){
+				gTexture = loadTexture("assets/titlescreen.png");
+				//removes everything from renderer
+				SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+				gTexture = NULL;
+				SDL_RenderPresent(gRenderer);
 			}
-			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
-			spaceinvaders.drawObjects();
-			SDL_RenderPresent(gRenderer);
-			if((1 + rand() % 1000) < 10){
-				if(spaceinvaders.EnemyList.size() < 30){
-					spaceinvaders.createEnemy(1 + rand() % 1000,-48);
+			else if(start == false){
+				gTexture = loadTexture("assets/instructions.png");
+				//removes everything from renderer
+				SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+				gTexture = NULL;
+				SDL_RenderPresent(gRenderer);
+			}
+			else if(start == true){
+					if(gTexture == NULL){
+						SDL_RenderClear(gRenderer);
+						gTexture = loadTexture("assets/background.png");
 				}
-			}
+				SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+				spaceinvaders.drawObjects();
+				SDL_RenderPresent(gRenderer);
+				if((1 + rand() % 1000) < 10){
+					if(spaceinvaders.EnemyList.size() < 30){
+						spaceinvaders.createEnemy(1 + rand() % 1000,-48);
+					}
+				}
 
-			}
-			
+				}
+				
 
-
-		while( SDL_PollEvent( &e ) != 0 )
-		{
-			//User requests quit
-			
-			
-			if( e.type == SDL_QUIT )
+		}
+			while( SDL_PollEvent( &e ) != 0 )
 			{
-				quit = true;
-			}
-			if(e.key.keysym.sym == SDLK_KP_ENTER || e.key.keysym.sym == SDLK_RETURN){
-				instructions = true;
-			}
-			if(e.key.keysym.sym == SDLK_TAB){
-				start = true;
+				//User requests quit
 				
-			}
-			if(e.type == SDL_MOUSEBUTTONDOWN){
-				int playerX, playerY;
-				playerX = player->mover()->x + 24;
-				playerY = player->mover()->y + 5;
-				spaceinvaders.createBullet(playerX, playerY);
-				Mix_PlayMusic( playerShot, 0.1 );
-
 				
-			} 
+				if( e.type == SDL_QUIT )
+				{
+					quit = true;
+				}
+				if(e.key.keysym.sym == SDLK_KP_ENTER || e.key.keysym.sym == SDLK_RETURN){
+					instructions = true;
+				}
+				if(e.key.keysym.sym == SDLK_TAB){
+					start = true;
+					
+				}
+				if(e.type == SDL_MOUSEBUTTONDOWN){
+					int playerX, playerY;
+					playerX = player->mover()->x + 24;
+					playerY = player->mover()->y + 5;
+					spaceinvaders.createBullet(playerX, playerY);
+					Mix_PlayMusic( playerShot, 0.1 );
 
-			 if(e.type == SDL_KEYDOWN){
-            switch(e.key.keysym.sym){
-                case SDLK_w:
-                    player->move('w');
-                    break;
-                case SDLK_a:
-                    player->move('a');
-                    break;
-                case SDLK_s:
-                    player->move('s');
-                    break;
-                case SDLK_d:
-                    player->move('d');
-                    break;
-                
-            	}
-        	}
+					
+				} 
+
+				if(e.type == SDL_KEYDOWN){
+				switch(e.key.keysym.sym){
+					case SDLK_w:
+						player->move('w');
+						break;
+					case SDLK_a:
+						player->move('a');
+						break;
+					case SDLK_s:
+						player->move('s');
+						break;
+					case SDLK_d:
+						player->move('d');
+						break;
+					
+					}
+				}
+				
+
+			}
 			
-
-    	}
 		if( Mix_PlayingMusic() == 0 )
 		{
 			//Play the music
