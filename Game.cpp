@@ -2,6 +2,7 @@
 #include"Player.hpp"
 #include"Lives.hpp"
 #include "SpaceInvaders.hpp"
+#include"BigEnemy.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include<time.h>
@@ -192,9 +193,13 @@ void Game::run( )
 				SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 				spaceinvaders.drawObjects();
 				SDL_RenderPresent(gRenderer);
-				if((1 + rand() % 1000) < 10){
-					if(spaceinvaders.EnemyList.size() < 30){
-						spaceinvaders.createEnemy(1 + rand() % 1000,-48);
+				if((1 + rand() % 1000) < 5){
+					if(spaceinvaders.SmallList.size() < 20 ){
+						spaceinvaders.createSmallEnemy(1 + rand() % 950,-48);
+					}
+					if(spaceinvaders.getEnemyCount() >= 20){
+						spaceinvaders.createBigEnemy(500, -160);
+						spaceinvaders.resetEnemyCount();
 					}
 				}
 
