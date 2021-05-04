@@ -155,7 +155,7 @@ void Game::run( )
 	SpaceInvaders spaceinvaders(gRenderer, assets);
 	Player* player;
 	srand(time(0));  //Seeding random variable on initialization of game state
-	spaceinvaders.createPlayer(500, 400);
+	spaceinvaders.createPlayer(500, 400);   //creating player and initial three lives
 	spaceinvaders.createLife(5, 570);
 	spaceinvaders.createLife(26, 570);
 	spaceinvaders.createLife(47, 570);
@@ -166,7 +166,6 @@ void Game::run( )
 		//Handle events on queue
 		if(spaceinvaders.isGameOver()){
 			gTexture = loadTexture("assets/gameover.png");
-			 //removes everything from renderer
 			SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 			gTexture = NULL;
 			SDL_RenderPresent(gRenderer);
@@ -174,14 +173,12 @@ void Game::run( )
 		else{
 			if(start == false && instructions == false){
 				gTexture = loadTexture("assets/titlescreen.png");
-				//removes everything from renderer
 				SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 				gTexture = NULL;
 				SDL_RenderPresent(gRenderer);
 			}
 			else if(start == false){
 				gTexture = loadTexture("assets/instructions.png");
-				//removes everything from renderer
 				SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 				gTexture = NULL;
 				SDL_RenderPresent(gRenderer);
@@ -192,17 +189,20 @@ void Game::run( )
 						gTexture = loadTexture("assets/background.png");
 				}
 				SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
-				spaceinvaders.drawObjects();
+				spaceinvaders.drawObjects();             //checks if a boss has been killed, and handles the powerup spawning
 				if(spaceinvaders.isBossKilled()){
 					spaceinvaders.resetBossKilled();
 					if(!spaceinvaders.fireUpCheck()){
 						spaceinvaders.createFireUp(500, 0);
 					}
 					else{
-						spaceinvaders.createLifeUp(500, 0);
+						if(spaceinvaders.LivesList.size() < 30){
+							spaceinvaders.createLifeUp(500, 0);
+						}
+						
 					}
 				}
-				SDL_RenderPresent(gRenderer);
+				SDL_RenderPresent(gRenderer);  //spawns enemies, there can only be a maximum of 20 at any one time. Also spawns a boss if 20 enemies are killed
 				if((1 + rand() % 1000) < 10){
 					if(spaceinvaders.SmallList.size() < 20 ){
 						spaceinvaders.createSmallEnemy(1 + rand() % 950,-48);
@@ -239,7 +239,7 @@ void Game::run( )
 					playerX = player->mover()->x + 24;
 					playerY = player->mover()->y + 5;
 					spaceinvaders.createBullet(playerX, playerY);
-					if(spaceinvaders.fireUpCheck()){
+					if(spaceinvaders.fireUpCheck()){ //if the powerup is taken, every shot shoots five bullets instead
 						spaceinvaders.createBullet(playerX + 5, playerY + 10);
 						spaceinvaders.createBullet(playerX + 10, playerY + 20);
 						spaceinvaders.createBullet(playerX - 5, playerY + 10);

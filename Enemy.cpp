@@ -16,7 +16,6 @@ void Enemy::descend(){
 }
 
 bool Enemy::hasCrossed(){
-    std::cout << "cross" << std::endl;
     return crossed;
 
 }

@@ -16,7 +16,7 @@ bool SpaceInvaders::isGameOver(){
 void SpaceInvaders::gameOver(){
     gameOverState = true;
 }
-//These three draw functions are all basically the same, the isDestroy() in Player and Bullet check if they need to be destroyed fir eg reaching the bottom for Bullet or colliding with a Enemy
+//These  draw functions are all basically the same, iterate through the list to draw, and call the destroy function if isDestroy(). Also call the collision functions where applicable
 void SpaceInvaders::drawPlayer(){
         for (auto iplayer = playerList.begin(); iplayer != playerList.end(); ++iplayer){
             (*iplayer)->draw(gRenderer, assets);
@@ -97,7 +97,6 @@ void SpaceInvaders::drawSmallEnemy(){
                     *iEnemy = NULL;
                     SmallList.erase(iEnemy);
                     
-                    std::cout << "destroyed" << std::endl;
                 }
         }
 }
@@ -119,24 +118,27 @@ void SpaceInvaders::drawBigEnemy(){
                     *iBig = NULL;
                     BigList.erase(iBig);
                     
-                    std::cout << "Big destroyed" << std::endl;
+
                 }
         }
 }
 
 void SpaceInvaders::collectLife(Player* p1, const SDL_Rect * PlayerMover){       
-    //Checks for intersection with a Enemy for the Bullet passed into it.
+
     for (auto iLifeIntersect = LifeUpList.begin(); iLifeIntersect != LifeUpList.end(); ++iLifeIntersect){
             if(SDL_HasIntersection(PlayerMover, (*iLifeIntersect)->mover())){   
                     (*iLifeIntersect)->destroyTrue();
-                    SpaceInvaders::createLife(LivesList.back()->getX() + 21, 570);
+                    if(LivesList.empty()){
+                        createLife(5, 570);
+                    }
+                    createLife(LivesList.back()->getX() + 21, 570);
 
             }
         }
 }
 
 void SpaceInvaders::collectFire(Player* p1, const SDL_Rect * PlayerMover){       
-    //Checks for intersection with a Enemy for the Bullet passed into it.
+
     for (auto iFireIntersect = FireUpList.begin(); iFireIntersect != FireUpList.end(); ++iFireIntersect){
             if(SDL_HasIntersection(PlayerMover, (*iFireIntersect)->mover())){   
                     (*iFireIntersect)->destroyTrue();
@@ -146,17 +148,7 @@ void SpaceInvaders::collectFire(Player* p1, const SDL_Rect * PlayerMover){
         }
 }
 
-bool SpaceInvaders::fireUpCheck(){
-    return fireUpTaken;
-}
 
-bool SpaceInvaders::isBossKilled(){
-    return bossKilled;
-}
-
-void SpaceInvaders::resetBossKilled(){
-    bossKilled = false;
-}
 void SpaceInvaders::smallHit(Bullet* e1, const SDL_Rect * BulletMover){       
     //Checks for intersection with a Enemy for the Bullet passed into it.
     for (auto iEnemyIntersect = SmallList.begin(); iEnemyIntersect != SmallList.end(); ++iEnemyIntersect){
@@ -193,6 +185,20 @@ void SpaceInvaders::bigHit(Bullet* e1, const SDL_Rect * BulletMover){
             }
         }
 }
+
+//check if a fireUp has been picked up, to avoid repeated drops
+bool SpaceInvaders::fireUpCheck(){
+    return fireUpTaken;
+}
+//Check if boss has been killed, to spawn a powerUp
+bool SpaceInvaders::isBossKilled(){
+    return bossKilled;
+}
+//reset the boss bool after the powerup is spawned
+void SpaceInvaders::resetBossKilled(){
+    bossKilled = false;
+}
+
 void SpaceInvaders::drawObjects(){
     //Checks if each list is empty, before drawing whatever is in that list. We have to perform the check because if we call draw on an empty list, it crashes the game(and my computer)
     if(!BulletList.empty()){
@@ -213,9 +219,11 @@ void SpaceInvaders::drawObjects(){
     if(!FireUpList.empty()){
         drawFireUp();
     }
+    //no check needed for this since we instantiate player in game.cpp 
     drawPlayer();
 }
 
+//to create new instances of each object
 void SpaceInvaders::createBullet(int x, int y){
     BulletList.push_back(new Bullet(x, y));
 }
@@ -244,10 +252,11 @@ void SpaceInvaders::createFireUp(int x, int y){
     FireUpList.push_back(new fireUp(x, y));
 }
 
+//returns the player
 Player* SpaceInvaders::getPlayer(){
     return playerList.front();
 }
-
+//functions to get and reset enemy count, for boss spawning
 int SpaceInvaders::getEnemyCount(){
     return enemyCount;
 }

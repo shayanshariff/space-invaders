@@ -55,7 +55,7 @@ Player::Player(int x, int y){  //spawning a Player at specific co ordinates
     moverRect = {x, y, 50, 60};
 }
 
-Player::Player(int x, int y, int w, int h){  //spawning a Player of a specific size at specific co ordinates, this is used to make baby Players
+Player::Player(int x, int y, int w, int h){  //spawning a Player of a specific size at specific co ordinates
     srcRect = {100,60,360,453};
     moverRect = {x, y, w, h};
 }
