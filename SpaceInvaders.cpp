@@ -20,6 +20,8 @@ void SpaceInvaders::gameOver(){
 void SpaceInvaders::drawPlayer(){
         for (auto iplayer = playerList.begin(); iplayer != playerList.end(); ++iplayer){
             (*iplayer)->draw(gRenderer, assets);
+            collectLife((*iplayer), (*iplayer)->mover());
+            collectFire((*iplayer), (*iplayer)->mover());
             if((*iplayer)->isDestroy()){
                 delete *iplayer;
                 *iplayer = NULL;
@@ -35,6 +37,31 @@ void SpaceInvaders::drawLife(){
                 delete *iLife;
                 *iLife = NULL;
                 LivesList.erase(iLife);
+            }
+        }
+    }
+
+void SpaceInvaders::drawLifeUp(){
+        for (auto iLifeUp = LifeUpList.begin(); iLifeUp != LifeUpList.end(); ++iLifeUp){
+            (*iLifeUp)->draw(gRenderer, assets);
+            (*iLifeUp)->descend();
+            if((*iLifeUp)->isDestroy()){
+                delete *iLifeUp;
+                *iLifeUp = NULL;
+                LifeUpList.erase(iLifeUp);
+            }
+        }
+    }
+
+
+void SpaceInvaders::drawFireUp(){
+        for (auto iFireUp = FireUpList.begin(); iFireUp != FireUpList.end(); ++iFireUp){
+            (*iFireUp)->draw(gRenderer, assets);
+            (*iFireUp)->descend();
+            if((*iFireUp)->isDestroy()){
+                delete *iFireUp;
+                *iFireUp = NULL;
+                FireUpList.erase(iFireUp);
             }
         }
     }
@@ -87,6 +114,7 @@ void SpaceInvaders::drawBigEnemy(){
                             SpaceInvaders::gameOver();
                         }
                     }
+                    bossKilled = true;
                     delete *iBig;
                     *iBig = NULL;
                     BigList.erase(iBig);
@@ -94,6 +122,40 @@ void SpaceInvaders::drawBigEnemy(){
                     std::cout << "Big destroyed" << std::endl;
                 }
         }
+}
+
+void SpaceInvaders::collectLife(Player* p1, const SDL_Rect * PlayerMover){       
+    //Checks for intersection with a Enemy for the Bullet passed into it.
+    for (auto iLifeIntersect = LifeUpList.begin(); iLifeIntersect != LifeUpList.end(); ++iLifeIntersect){
+            if(SDL_HasIntersection(PlayerMover, (*iLifeIntersect)->mover())){   
+                    (*iLifeIntersect)->destroyTrue();
+                    SpaceInvaders::createLife(LivesList.back()->getX() + 21, 570);
+
+            }
+        }
+}
+
+void SpaceInvaders::collectFire(Player* p1, const SDL_Rect * PlayerMover){       
+    //Checks for intersection with a Enemy for the Bullet passed into it.
+    for (auto iFireIntersect = FireUpList.begin(); iFireIntersect != FireUpList.end(); ++iFireIntersect){
+            if(SDL_HasIntersection(PlayerMover, (*iFireIntersect)->mover())){   
+                    (*iFireIntersect)->destroyTrue();
+                    fireUpTaken = true;
+
+            }
+        }
+}
+
+bool SpaceInvaders::fireUpCheck(){
+    return fireUpTaken;
+}
+
+bool SpaceInvaders::isBossKilled(){
+    return bossKilled;
+}
+
+void SpaceInvaders::resetBossKilled(){
+    bossKilled = false;
 }
 void SpaceInvaders::smallHit(Bullet* e1, const SDL_Rect * BulletMover){       
     //Checks for intersection with a Enemy for the Bullet passed into it.
@@ -145,6 +207,12 @@ void SpaceInvaders::drawObjects(){
     if(!LivesList.empty()){
         drawLife();
     }
+    if(!LifeUpList.empty()){
+        drawLifeUp();
+    }
+    if(!FireUpList.empty()){
+        drawFireUp();
+    }
     drawPlayer();
 }
 
@@ -166,6 +234,14 @@ void SpaceInvaders::createBigEnemy(int x, int y){
 
 void SpaceInvaders::createLife(int x, int y){
     LivesList.push_back(new Lives(x, y));
+}
+
+void SpaceInvaders::createLifeUp(int x, int y){
+    LifeUpList.push_back(new lifeUp(x, y));
+}
+
+void SpaceInvaders::createFireUp(int x, int y){
+    FireUpList.push_back(new fireUp(x, y));
 }
 
 Player* SpaceInvaders::getPlayer(){

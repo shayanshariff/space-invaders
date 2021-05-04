@@ -16,7 +16,9 @@ void BigEnemy::descend(){
     }
 
 }
-
+SDL_Rect* BigEnemy::mover(){
+    return &moverRect;
+}
 BigEnemy::BigEnemy(){
     srcRect = {940, 130, 200, 200};
     moverRect = {40, 40, 60, 70};

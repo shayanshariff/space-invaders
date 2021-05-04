@@ -149,6 +149,7 @@ void Game::run( )
 {
 	bool quit = false;
 	bool start,instructions = false;
+	bool lifeUp, fireUp;
 	SDL_Event e;
 	SDL_Color color={255, 255, 255};
 	SpaceInvaders spaceinvaders(gRenderer, assets);
@@ -192,10 +193,20 @@ void Game::run( )
 				}
 				SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 				spaceinvaders.drawObjects();
+				if(spaceinvaders.isBossKilled()){
+					spaceinvaders.resetBossKilled();
+					if(!spaceinvaders.fireUpCheck()){
+						spaceinvaders.createFireUp(500, 0);
+					}
+					else{
+						spaceinvaders.createLifeUp(500, 0);
+					}
+				}
 				SDL_RenderPresent(gRenderer);
-				if((1 + rand() % 1000) < 5){
+				if((1 + rand() % 1000) < 10){
 					if(spaceinvaders.SmallList.size() < 20 ){
 						spaceinvaders.createSmallEnemy(1 + rand() % 950,-48);
+						
 					}
 					if(spaceinvaders.getEnemyCount() >= 20){
 						spaceinvaders.createBigEnemy(500, -160);
@@ -228,6 +239,12 @@ void Game::run( )
 					playerX = player->mover()->x + 24;
 					playerY = player->mover()->y + 5;
 					spaceinvaders.createBullet(playerX, playerY);
+					if(spaceinvaders.fireUpCheck()){
+						spaceinvaders.createBullet(playerX + 5, playerY + 10);
+						spaceinvaders.createBullet(playerX + 10, playerY + 20);
+						spaceinvaders.createBullet(playerX - 5, playerY + 10);
+						spaceinvaders.createBullet(playerX - 10, playerY + 20);
+					}
 					Mix_PlayMusic( playerShot, 0.1 );
 
 					

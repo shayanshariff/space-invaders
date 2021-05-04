@@ -1,5 +1,5 @@
 #include "Enemy.hpp"
-
+#include<iostream>
 
 void Enemy::draw(SDL_Renderer* gRenderer, SDL_Texture* assets){
     Unit::draw(gRenderer, assets);
@@ -16,7 +16,9 @@ void Enemy::descend(){
 }
 
 bool Enemy::hasCrossed(){
+    std::cout << "cross" << std::endl;
     return crossed;
+
 }
 
 void Enemy::cross(){

@@ -13,7 +13,7 @@ public:
     void descend();
     bool isDestroy();
     void destroyTrue();
-    bool crossed;
+    bool crossed = false;
     bool hasCrossed();
     void cross();
     SDL_Rect *mover();

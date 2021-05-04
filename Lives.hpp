@@ -11,6 +11,7 @@ public:
     void draw(SDL_Renderer*, SDL_Texture* assets);
     bool isDestroy();
     void destroyTrue();
+    int getX();
     Lives(); 
     Lives(int x, int y);
     // may add other overloaded constructors here... 

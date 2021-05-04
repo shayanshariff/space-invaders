@@ -17,6 +17,9 @@ void Lives::destroyTrue(){
     destroy = true;
 }
 
+int Lives::getX(){
+    return moverRect.x;
+}
 Lives::Lives(){
     // src coorinates from assets.png file, they have been found using spritecow.com
     srcRect = {100,60,360,453};
